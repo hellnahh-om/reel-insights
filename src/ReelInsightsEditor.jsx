@@ -917,7 +917,16 @@ export default function ReelInsightsEditor({ onLogout } = {}) {
         <p className="text-neutral-500 text-xs mb-3">
           Edit any value below — the preview updates instantly.
         </p>
-
+        {onLogout && (
+          <Section title="Account" isOpen={openSection === "Account"} onToggle={() => setOpenSection(openSection === "Account" ? null : "Account")}>
+            <button
+              onClick={onLogout}
+              className="w-full text-center text-sm text-red-400 border border-neutral-700 rounded-lg py-2 hover:bg-neutral-800"
+            >
+              Log out
+            </button>
+          </Section>
+        )}
         <Section title="Header" isOpen={openSection === "Header"} onToggle={() => setOpenSection(openSection === "Header" ? null : "Header")}>
           <Field label="Title">
             <TextInput
