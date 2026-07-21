@@ -13,18 +13,28 @@ export default function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const loadProfile = useCallback(async (userId) => {
-    let { data } = await supabase
+    let { data, error } = await supabase
       .from("profiles")
       .select("*")
       .eq("user_id", userId)
       .maybeSingle();
 
+    if (error) {
+      alert("Error loading profile: " + error.message);
+      return;
+    }
+
     if (!data) {
-      const { data: created } = await supabase
+      const { data: created, error: insertError } = await supabase
         .from("profiles")
         .insert({ user_id: userId, is_subscribed: false })
         .select()
         .single();
+
+      if (insertError) {
+        alert("Error creating profile: " + insertError.message);
+        return;
+      }
       data = created;
     }
 
