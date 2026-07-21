@@ -369,7 +369,7 @@ const defaultState = {
   },
 };
 
-export default function ReelInsightsEditor({ onLogout } = {}) {
+  export default function ReelInsightsEditor({ onLogout, isSubscribed, requireAuth } = {}) {
   const [state, setState] = useState(defaultState);
   const [openSection, setOpenSection] = useState("Header");
   const contentRef = useRef(null);
