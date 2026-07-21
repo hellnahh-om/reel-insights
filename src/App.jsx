@@ -64,7 +64,12 @@ export default function App() {
   }, [loadProfile]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      alert("Logout error: " + error.message);
+    }
+    setSession(null);
+    setProfile(null);
   };
 
   const requireAuth = () => {
