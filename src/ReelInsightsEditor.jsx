@@ -385,6 +385,7 @@ const defaultState = {
   }, [state]);
 
   const update = (path, value) => {
+  if (requireAuth && !requireAuth()) return;
     setState((prev) => {
       const next = structuredClone(prev);
       let obj = next;
@@ -395,6 +396,7 @@ const defaultState = {
   };
 
   const updateArrayItem = (arrPath, index, key, value) => {
+    if (requireAuth && !requireAuth()) return;
     setState((prev) => {
       const next = structuredClone(prev);
       let obj = next;
