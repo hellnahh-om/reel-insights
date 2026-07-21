@@ -47,27 +47,5 @@ export default function App() {
     return <Auth />;
   }
 
-  return (
-    <div>
-      <button
-        onClick={handleLogout}
-        style={{
-          position: "fixed",
-          top: "12px",
-          right: "12px",
-          zIndex: 1000,
-          padding: "8px 14px",
-          borderRadius: "8px",
-          border: "1px solid #333",
-          backgroundColor: "#111",
-          color: "#fff",
-          fontSize: "13px",
-          cursor: "pointer",
-        }}
-      >
-        Log out
-      </button>
-      <ReelInsightsEditor />
-    </div>
-  );
+  return <ReelInsightsEditor onLogout={handleLogout} />;
 }
