@@ -1,30 +1,48 @@
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 const supabaseAdmin = createClient(
   process.env.VITE_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
+
+function readRawBody(req) {
+  return new Promise((resolve, reject) => {
+    let data = "";
+    req.on("data", (chunk) => (data += chunk));
+    req.on("end", () => resolve(data));
+    req.on("error", reject);
+  });
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const rawBody = JSON.stringify(req.body);
+  const rawBody = await readRawBody(req);
   const signature = req.headers["x-signature"];
   const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
 
-  const digest = crypto
-    .createHmac("sha256", secret)
-    .update(rawBody)
-    .digest("hex");
+  const digest = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
 
-  if (signature !== digest) {
+  const sigBuffer = Buffer.from(signature || "", "utf8");
+  const digestBuffer = Buffer.from(digest, "utf8");
+
+  if (
+    sigBuffer.length !== digestBuffer.length ||
+    !crypto.timingSafeEqual(sigBuffer, digestBuffer)
+  ) {
     return res.status(401).json({ error: "Invalid signature" });
   }
 
-  const event = req.body;
+  const event = JSON.parse(rawBody);
   const eventName = event.meta?.event_name;
   const userId = event.meta?.custom_data?.user_id;
 
